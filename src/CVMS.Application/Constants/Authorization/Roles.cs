@@ -1,6 +1,6 @@
 namespace CVMS.Application.Constants.Authorization;
 
-public static class RoleNames
+public static class Roles
 {
     public const string Candidate = "Candidate";
     public const string Recruiter = "Recruiter";
