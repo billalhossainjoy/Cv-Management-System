@@ -1,5 +1,8 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/CVMS.Application/CVMS.Application.csproj" />
+    <Project Path="src/CVMS.Domain/CVMS.Domain.csproj" />
+    <Project Path="src/CVMS.Infrastructure/CVMS.Infrastructure.csproj" />
     <Project Path="src/CVMS.Web/CVMS.Web.csproj" />
   </Folder>
 </Solution>

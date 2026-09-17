@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: cvms-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: cvms
+      POSTGRES_USER: cvms_user
+      POSTGRES_PASSWORD: cvms_password
+
+    ports:
+      - "5431:5432"
+
+    volumes:
+      - cvms_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cvms_user -d cvms"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  cvms_postgres_data:
