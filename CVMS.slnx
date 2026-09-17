@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CVMS.Web/CVMS.Web.csproj" />
+  </Folder>
+</Solution>
