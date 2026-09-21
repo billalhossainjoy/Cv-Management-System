@@ -5,13 +5,15 @@ namespace CVMS.Web.Models.Auth;
 public sealed class RegisterViewModel
 {
     [Required]
+    [MaxLength(100)]
     [Display(Name = "First Name")]
-    [StringLength(100)]
     public string FirstName { get; set; } = string.Empty;
+
     [Required]
+    [MaxLength(100)]
     [Display(Name = "Last Name")]
-    [StringLength(100)]
-    public string LastName { get; set; }= string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    
     
     [Required]
     [EmailAddress]

@@ -1,5 +1,8 @@
 using CVMS.Application.Constants.Authorization;
+using CVMS.Domain.Attributes;
+using CVMS.Domain.Entities;
 using CVMS.Infrastructure.Identity;
+using CVMS.Infrastructure.Persistence;
 using CVMS.Web.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +17,13 @@ public sealed class AccountController : Controller
 {
     private readonly AppUserManager _userManager;
     private readonly AppSignInManager _signInManager;
+    private readonly ApplicationDbContext _context;
 
-    public AccountController(AppUserManager userManager,AppSignInManager  signInManager )
+    public AccountController(AppUserManager userManager,AppSignInManager  signInManager, ApplicationDbContext context )
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _context = context;
     }
     
     [HttpGet]
@@ -38,29 +43,72 @@ public sealed class AccountController : Controller
             return View(model);
         }
 
-        var user = new ApplicationUser
-        {
-            UserName = model.Email,
-            Email = model.Email,
-            FirstName = model.FirstName,
-            LastName =  model.LastName
-        };
+        await using var transaction = await _context.Database.BeginTransactionAsync();
 
-        var result = await _userManager.CreateAsync(user, model.Password);
-        if (!result.Succeeded)
+        try
         {
-            foreach (var error in result.Errors)
+           var user = new ApplicationUser
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                UserName = model.Email,
+                Email = model.Email
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            
+            if (!result.Succeeded)
+            {
+                await transaction.RollbackAsync();
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        error.Description);
+                }
+
+                return View(model);
             }
 
-            return View(model);
+            await _userManager.AddToRoleAsync(
+                user, Roles.Candidate);
+
+            var profile = new Profile()
+            {
+                UserId = user.Id
+            };
+
+            _context.Profiles.Add(profile);
+
+            var profileValues = new List<ProfileValue>
+            {
+                new()
+                {
+                    Profile = profile,
+                    AttributeId = BuiltInAttributes.FirstName,
+                    Value = model.FirstName
+                },
+
+                new()
+                {
+                    Profile = profile,
+                    AttributeId = BuiltInAttributes.LastName,
+                    Value = model.LastName
+                }
+            };
+            _context.ProfileValues.AddRange(profileValues);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            await _signInManager.SignInAsync(
+                user, isPersistent: false);
+            
+            return RedirectToAction("Index", "Home");
+
         }
-
-        await _userManager.AddToRoleAsync(user, Roles.Candidate);
-        await _signInManager.SignInAsync(user, isPersistent: false);
-
-        return RedirectToAction("Index", "Home");
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
     
     [HttpGet]
