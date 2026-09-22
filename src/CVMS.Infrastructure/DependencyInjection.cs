@@ -1,5 +1,6 @@
 using CVMS.Application.Constants.Authorization;
 using CVMS.Application.Services;
+using CVMS.Application.Services.Interfaces;
 using CVMS.Infrastructure.Identity;
 using CVMS.Infrastructure.Persistence;
 using CVMS.Infrastructure.Services;
@@ -31,6 +32,7 @@ public static class DependencyInjection
         
         services.AddScoped<IProfileService, ProfileService>();
         services.AddScoped<IProjectService, ProjectService>();
+        services.AddScoped<IAttributeService, AttributeService>();
 
         services.AddAuthorization(options =>
         {
