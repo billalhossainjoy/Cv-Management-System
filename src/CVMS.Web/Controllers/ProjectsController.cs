@@ -91,5 +91,103 @@ public class ProjectsController : Controller
         
         return RedirectToAction(nameof(Index));
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> Edit(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var project = await _projectService.GetProjectAsync(
+            userId.Value,
+            id,
+            cancellationToken);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+
+        var model = new EditProjectViewModel
+        {
+            Id = project.Id,
+            Name = project.Name,
+            StartDate = project.StartDate,
+            EndDate = project.EndDate,
+            Description = project.Description
+        };
+
+        return View(model);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(
+        EditProjectViewModel model,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var userId = GetUserId();
+
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var request = new UpdateProjectRequest(
+            model.Name,
+            model.StartDate,
+            model.EndDate,
+            model.Description);
+
+        var updated = await _projectService.UpdateProjectAsync(
+            userId.Value,
+            model.Id,
+            request,
+            cancellationToken);
+
+        if (!updated)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var deleted = await _projectService.DeleteProjectAsync(
+            userId.Value,
+            id,
+            cancellationToken);
+
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
 
 }

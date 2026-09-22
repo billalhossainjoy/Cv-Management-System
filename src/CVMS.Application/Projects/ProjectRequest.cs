@@ -5,3 +5,9 @@ public sealed record CreateProjectRequest(
     DateOnly StartDate,
     DateOnly? EndDate,
     string Description);
+    
+public sealed record UpdateProjectRequest(
+    string Name,
+    DateOnly StartDate,
+    DateOnly? EndDate,
+    string Description);

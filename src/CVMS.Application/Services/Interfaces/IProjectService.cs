@@ -14,4 +14,20 @@ public interface IProjectService
         CreateProjectRequest request,
         CancellationToken cancellationToken);
     
+    Task<Project?> GetProjectAsync(
+        Guid userId,
+        Guid projectId,
+        CancellationToken cancellationToken);
+
+    Task<bool> UpdateProjectAsync(
+        Guid userId,
+        Guid projectId,
+        UpdateProjectRequest request,
+        CancellationToken cancellationToken);
+
+    Task<bool> DeleteProjectAsync(
+        Guid userId,
+        Guid projectId,
+        CancellationToken cancellationToken);
+    
 }

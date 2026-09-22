@@ -60,4 +60,58 @@ public class ProjectService: IProjectService
 
         return true;
     }
+
+
+    public async Task<Project?> GetProjectAsync(Guid userId, Guid projectId, CancellationToken cancellationToken)
+    {
+        return await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.Profile.UserId == userId,
+            cancellationToken);
+    }
+
+    public async Task<bool> UpdateProjectAsync(Guid userId, Guid projectId, UpdateProjectRequest request, CancellationToken cancellationToken)
+    {
+        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.Profile.UserId == userId,
+            cancellationToken);
+
+        if (project is null)
+            return false;
+
+        if (request.EndDate is not null && request.EndDate < request.StartDate)
+            return false;
+
+        project.Name = request.Name.Trim();
+        project.StartDate = request.StartDate;
+        project.EndDate = request.StartDate;
+        project.Description = request.Description.Trim();
+        project.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+
+    }
+    
+    public async Task<bool> DeleteProjectAsync(
+        Guid userId,
+        Guid projectId,
+        CancellationToken cancellationToken)
+    {
+        var project = await _context.Projects
+            .FirstOrDefaultAsync(
+                p =>
+                    p.Id == projectId &&
+                    p.Profile.UserId == userId,
+                cancellationToken);
+
+        if (project is null)
+        {
+            return false;
+        }
+
+        _context.Projects.Remove(project);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
+    
 }
