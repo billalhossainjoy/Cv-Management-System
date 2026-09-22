@@ -3,6 +3,20 @@
 
 <h1>My Profile</h1>
 
+<form
+    asp-action="AddAttribute"
+    method="post"
+    class="mx-auto w-100 d-flex gap-3 mb-3" style="max-width: 580px">
+    <div class="position-relative flex-grow-1" id="attributeSearchContainer">
+        <input id="attributeSearch" type="text" class="form-control" placeholder="Search attributes..." autocomplete="off"/>
+        <input id="attributeId" type="hidden" name="attributeId"/>
+        <div id="attributeResult" class="list-group position-absolute w-100"></div>
+    </div>
+    <button type="submit" class="btn btn-secondary">
+        Add
+    </button>
+</form>
+
 <form asp-action="Save" method="post"  style="max-width: 580px" class="mx-auto d-flex flex-column gap-3">
     <input type="hidden" asp-for="Id"/>
     <input type="hidden" asp-for="Version"/>
@@ -64,6 +78,18 @@
             <input type="hidden"
                    name="Values[@i].AttributeId"
                    value="@item.AttributeId" />
+            
+            @if (!item.IsBuiltIn)
+            {
+                <button type="submit" formaction="@Url.Action("RemoveAttribute", "Profile")"
+                        formmethod="post"
+                        name="attributeId"
+                        value="@item.AttributeId"
+                        class="btn btn-outline-danger ms-3"
+                >
+                    Remove
+                </button>
+            }
         </div>
     }
     
@@ -73,3 +99,80 @@
         </button>
     </div>
 </form>
+
+<script>
+    const searchInput = document.getElementById("attributeSearch");
+    const attributeId = document.getElementById("attributeId")
+    const results = document.getElementById("attributeResult")
+    const searchContainer = document.getElementById("attributeSearchContainer")
+    
+    let timeoutId;
+    
+    searchInput.addEventListener("input", () => {
+        clearTimeout(timeoutId)
+        const prefix = searchInput.value.trim();
+        
+        attributeId.value = "";
+        results.innerHTML = "";
+        
+        if(prefix.length < 2){
+            return
+        }
+        
+        timeoutId = setTimeout(async () => {
+            const response = await fetch(`/Profile/SearchAttributes?prefix=${encodeURIComponent(prefix)}`)
+            if(!response.ok)
+            {
+                return;
+            }
+            const attributes = await response.json();
+            results.innerHTML = "";
+            for(const attr of attributes){
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "list-group-item list-group-item-action";
+                button.textContent = `${attr.name} (${attr.category})`;
+                button.addEventListener("click", () => {
+                    searchInput.value = attr.name;
+                    attributeId.value = attr.id;
+                    results.innerHTML = "";
+                });
+                
+                results.appendChild(button)
+            }
+        }, 300)
+    })
+    
+    searchInput.addEventListener("focus", async () => {
+        if (searchInput.value.trim() !== "") {
+            return;
+        }
+        
+        const response = await fetch("/Profile/RecentAttributes/");
+        if (!response.ok) {
+            return;
+        }
+        
+        const attributes = await response.json();
+        results.innerHTML = "";
+        
+        for (const attr of attributes){
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className  = "list-group-item list-group-item-action";
+            button.textContent = `${attr.name} (${attr.category})`;
+            button.addEventListener("click", () => {
+                searchInput.value = attr.name;
+                attributeId.value = attr.id;
+                results.innerHTML = "";
+            })
+            results.appendChild(button)
+        }
+    })
+    
+    document.addEventListener("click", event => {
+        if(!searchContainer.contains(event.target)){
+            results.innerHTML = "";
+        }
+    })
+</script>

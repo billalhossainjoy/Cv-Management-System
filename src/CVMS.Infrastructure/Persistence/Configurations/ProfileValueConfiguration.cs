@@ -13,6 +13,7 @@ public class ProfileValueConfiguration: IEntityTypeConfiguration<ProfileValue>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Value).HasMaxLength(500);
         builder.Property(x => x.Version).IsRowVersion();
+        builder.HasIndex(x => new { x.ProfileId, x.AttributeId });
         
         builder.HasOne(x => x.Profile)
             .WithMany(x => x.Values)

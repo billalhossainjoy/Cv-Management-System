@@ -8,6 +8,14 @@ public class ProfileViewModel
     public Guid Id { get; set; }
 
     public List<ProfileValueViewModel> Values { get; set; } = new();
+    public List<AvailableAttributeViewModel> AvailableAttributes { get; set; } = new();
+}
+
+public class AvailableAttributeViewModel
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
 }
 
 public class ProfileValueViewModel
@@ -19,4 +27,6 @@ public class ProfileValueViewModel
     public string AttributeType { get; set; } = string.Empty;
 
     public string? Value { get; set; }
+
+    public bool IsBuiltIn { get; set; }
 }

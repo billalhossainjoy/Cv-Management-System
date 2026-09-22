@@ -2,6 +2,7 @@ using System.Security.Claims;
 using CVMS.Application.Profiles;
 using CVMS.Application.Services;
 using CVMS.Domain.Attributes;
+using CVMS.Domain.Entities;
 using CVMS.Web.Models.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ public class ProfileController : Controller
     
     public async Task<IActionResult> Index( CancellationToken cancellationToken)
     {
-        var userId = GetUserId();   
+        var userId = GetUserId();
         if (userId is null)
             return Unauthorized();
         
@@ -38,6 +39,10 @@ public class ProfileController : Controller
         {
             return NotFound();
         }
+        var availableAttributes =
+            await _profileService.GetAvailableAttributesAsync(
+                userId.Value,
+                cancellationToken);
 
         var model = new ProfileViewModel
         {
@@ -50,8 +55,18 @@ public class ProfileController : Controller
                 AttributeId = x.AttributeId,
                 AttributeName = x.Attribute.Name,
                 AttributeType = x.Attribute.Type.ToString(),
-                Value = x.Value
-            }).ToList()
+                Value = x.Value,
+                IsBuiltIn = x.Attribute.IsBuiltIn
+            }).ToList(),
+            
+            AvailableAttributes = availableAttributes
+                .Select(a => new AvailableAttributeViewModel
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Category = a.Category.ToString()
+                })
+                .ToList()
         };
         
         return View(model);
@@ -95,5 +110,60 @@ public class ProfileController : Controller
             default:
                 return BadRequest();
         }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddAttribute(Guid attributeId, CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var added = await _profileService.AddAttributeAsync(userId.Value, attributeId, cancellationToken);
+
+        if (!added)
+            return BadRequest();
+
+        return RedirectToAction(nameof(Index));
+
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveAttribute(Guid attributeId, CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        if (userId is null)
+            return Unauthorized();
+
+        var removed = await _profileService.RemoveAttributeAsync(userId.Value, attributeId, cancellationToken);
+        
+        if (!removed)
+            return BadRequest();
+        return RedirectToAction(nameof(Index));
+
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SearchAttributes(string prefix, CancellationToken  cancellationToken)
+    {
+        var userId = GetUserId();
+        if (userId is null)
+            return Unauthorized();
+
+        var attributes = await _profileService.SearchAvailableAttributesAsync(userId.Value, prefix, cancellationToken);
+        return Json(attributes);
+    }
+
+    public async Task<IActionResult> RecentAttributes(CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        if (userId is null)
+            return Unauthorized();
+
+        var attributes = await _profileService.GetRecentlyUsedAttributesAsync(userId.Value, cancellationToken);
+        return Json(attributes);
     }
 }
