@@ -13,6 +13,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<CvAttribute> Attributes => Set<CvAttribute>();
     public DbSet<Profile>  Profiles => Set<Profile>();
     public DbSet<ProfileValue> ProfileValues => Set<ProfileValue>();
+    public DbSet<Project> Projects => Set<Project>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

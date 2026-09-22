@@ -30,6 +30,7 @@ public static class DependencyInjection
             .AddDefaultTokenProviders();
         
         services.AddScoped<IProfileService, ProfileService>();
+        services.AddScoped<IProjectService, ProjectService>();
 
         services.AddAuthorization(options =>
         {
