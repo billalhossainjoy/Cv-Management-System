@@ -1,5 +1,13 @@
 namespace CVMS.Application.Projects;
 
+public enum ProjectResultStatus
+{
+    Success,
+    NotFound,
+    InvalidDateRange,
+    Failure
+}
+
 public sealed record CreateProjectRequest(
     string Name,
     DateOnly StartDate,

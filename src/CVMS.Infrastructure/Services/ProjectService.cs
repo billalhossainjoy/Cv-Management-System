@@ -6,9 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CVMS.Infrastructure.Services;
 
-public class ProjectService: IProjectService
+public class ProjectService : IProjectService
 {
     private readonly ApplicationDbContext _context;
+
     public ProjectService(ApplicationDbContext context)
     {
         _context = context;
@@ -18,32 +19,32 @@ public class ProjectService: IProjectService
         Guid userId,
         CancellationToken cancellationToken)
     {
-        var profileId = await _context.Profiles
-            .Where(p => p.UserId == userId)
-            .Select(p => (Guid?)p.Id)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (profileId is null)
-            return [];
-        
-
-        return _context.Projects.Where(p => p.Profile.Id == profileId).ToList();
+        return await _context.Projects
+            .Where(p => p.Profile.UserId == userId)
+            .OrderByDescending(p => p.StartDate)
+            .ToListAsync(cancellationToken);
     }
 
-    
-    public async Task<bool> CreateProjectAsync(
+    public async Task<ProjectResultStatus> CreateProjectAsync(
         Guid userId,
         CreateProjectRequest request,
         CancellationToken cancellationToken)
     {
+        if (request.EndDate is not null &&
+            request.EndDate < request.StartDate)
+        {
+            return ProjectResultStatus.InvalidDateRange;
+        }
+
         var profileId = await _context.Profiles
             .Where(p => p.UserId == userId)
             .Select(p => (Guid?)p.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (profileId is null)
-            return false;
-        
+        {
+            return ProjectResultStatus.NotFound;
+        }
 
         var project = new Project
         {
@@ -58,39 +59,58 @@ public class ProjectService: IProjectService
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return ProjectResultStatus.Success;
     }
 
-
-    public async Task<Project?> GetProjectAsync(Guid userId, Guid projectId, CancellationToken cancellationToken)
+    public async Task<Project?> GetProjectAsync(
+        Guid userId,
+        Guid projectId,
+        CancellationToken cancellationToken)
     {
-        return await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.Profile.UserId == userId,
-            cancellationToken);
+        return await _context.Projects
+            .FirstOrDefaultAsync(
+                p =>
+                    p.Id == projectId &&
+                    p.Profile.UserId == userId,
+                cancellationToken);
     }
 
-    public async Task<bool> UpdateProjectAsync(Guid userId, Guid projectId, UpdateProjectRequest request, CancellationToken cancellationToken)
+    public async Task<ProjectResultStatus> UpdateProjectAsync(
+        Guid userId,
+        Guid projectId,
+        UpdateProjectRequest request,
+        CancellationToken cancellationToken)
     {
-        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId && p.Profile.UserId == userId,
-            cancellationToken);
+        var project = await _context.Projects
+            .FirstOrDefaultAsync(
+                p =>
+                    p.Id == projectId &&
+                    p.Profile.UserId == userId,
+                cancellationToken);
 
         if (project is null)
-            return false;
+        {
+            return ProjectResultStatus.NotFound;
+        }
 
-        if (request.EndDate is not null && request.EndDate < request.StartDate)
-            return false;
+        if (request.EndDate is not null &&
+            request.EndDate < request.StartDate)
+        {
+            return ProjectResultStatus.InvalidDateRange;
+        }
 
         project.Name = request.Name.Trim();
         project.StartDate = request.StartDate;
-        project.EndDate = request.StartDate;
+        project.EndDate = request.EndDate;
         project.Description = request.Description.Trim();
         project.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(cancellationToken);
-        return true;
 
+        return ProjectResultStatus.Success;
     }
-    
-    public async Task<bool> DeleteProjectAsync(
+
+    public async Task<ProjectResultStatus> DeleteProjectAsync(
         Guid userId,
         Guid projectId,
         CancellationToken cancellationToken)
@@ -104,14 +124,13 @@ public class ProjectService: IProjectService
 
         if (project is null)
         {
-            return false;
+            return ProjectResultStatus.NotFound;
         }
 
         _context.Projects.Remove(project);
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return true;
+        return ProjectResultStatus.Success;
     }
-    
 }

@@ -16,7 +16,7 @@ public class ProjectsController : Controller
     {
         _projectService = projectService;
     }
-    
+
     private Guid? GetUserId()
     {
         var value = User.FindFirstValue(
@@ -26,7 +26,7 @@ public class ProjectsController : Controller
             ? userId
             : null;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> Index(
         CancellationToken cancellationToken)
@@ -34,16 +34,14 @@ public class ProjectsController : Controller
         var userId = GetUserId();
 
         if (userId is null)
-        {
             return Unauthorized();
-        }
 
         var projects = await _projectService.GetProjectsAsync(
             userId.Value,
             cancellationToken);
 
         var model = projects
-            .Select(p => new ProjectListItemViewModel()
+            .Select(p => new ProjectListItemViewModel
             {
                 Id = p.Id,
                 Name = p.Name,
@@ -58,14 +56,17 @@ public class ProjectsController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        return View();
+        return View(new CreateProjectViewModel());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateProjectViewModel model,  CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        CreateProjectViewModel model,
+        CancellationToken cancellationToken)
     {
         var userId = GetUserId();
+
         if (userId is null)
             return Unauthorized();
 
@@ -77,21 +78,36 @@ public class ProjectsController : Controller
             model.StartDate,
             model.EndDate,
             model.Description);
-        
-        var project = await _projectService.CreateProjectAsync(userId.Value, request, cancellationToken);
-        
-        if (!project)
-        {
-            ModelState.AddModelError(
-                string.Empty,
-                "Unable to create project.");
 
-            return View(model);
+        var result = await _projectService.CreateProjectAsync(
+            userId.Value,
+            request,
+            cancellationToken);
+
+        switch (result)
+        {
+            case ProjectResultStatus.Success:
+                return RedirectToAction(nameof(Index));
+
+            case ProjectResultStatus.InvalidDateRange:
+                ModelState.AddModelError(
+                    nameof(model.EndDate),
+                    "End date cannot be before start date.");
+
+                return View(model);
+
+            case ProjectResultStatus.Failure:
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Unable to create project.");
+
+                return View(model);
+
+            default:
+                return BadRequest();
         }
-        
-        return RedirectToAction(nameof(Index));
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> Edit(
         Guid id,
@@ -100,19 +116,20 @@ public class ProjectsController : Controller
         var userId = GetUserId();
 
         if (userId is null)
-        {
             return Unauthorized();
-        }
+
+        Console.WriteLine($"PROJECT ID: {id}");
+        Console.WriteLine($"USER ID: {userId}");
 
         var project = await _projectService.GetProjectAsync(
             userId.Value,
             id,
             cancellationToken);
 
+        Console.WriteLine($"PROJECT FOUND: {project is not null}");
+
         if (project is null)
-        {
             return NotFound();
-        }
 
         var model = new EditProjectViewModel
         {
@@ -125,24 +142,20 @@ public class ProjectsController : Controller
 
         return View(model);
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(
         EditProjectViewModel model,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
-
         var userId = GetUserId();
 
         if (userId is null)
-        {
             return Unauthorized();
-        }
+
+        if (!ModelState.IsValid)
+            return View(model);
 
         var request = new UpdateProjectRequest(
             model.Name,
@@ -150,20 +163,39 @@ public class ProjectsController : Controller
             model.EndDate,
             model.Description);
 
-        var updated = await _projectService.UpdateProjectAsync(
+        var result = await _projectService.UpdateProjectAsync(
             userId.Value,
             model.Id,
             request,
             cancellationToken);
 
-        if (!updated)
+        switch (result)
         {
-            return NotFound();
-        }
+            case ProjectResultStatus.Success:
+                return RedirectToAction(nameof(Index));
 
-        return RedirectToAction(nameof(Index));
+            case ProjectResultStatus.NotFound:
+                return NotFound();
+
+            case ProjectResultStatus.InvalidDateRange:
+                ModelState.AddModelError(
+                    nameof(model.EndDate),
+                    "End date cannot be before start date.");
+
+                return View(model);
+
+            case ProjectResultStatus.Failure:
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Unable to update project.");
+
+                return View(model);
+
+            default:
+                return BadRequest();
+        }
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(
@@ -173,21 +205,27 @@ public class ProjectsController : Controller
         var userId = GetUserId();
 
         if (userId is null)
-        {
             return Unauthorized();
-        }
 
         var deleted = await _projectService.DeleteProjectAsync(
             userId.Value,
             id,
             cancellationToken);
 
-        if (!deleted)
+        switch (deleted)
         {
-            return NotFound();
+            case ProjectResultStatus.Success:
+                return RedirectToAction(nameof(Index));
+
+            case ProjectResultStatus.NotFound:
+                return NotFound();
+
+            case ProjectResultStatus.Failure:
+                TempData["Error"] = "Unable to delete project.";
+                return RedirectToAction(nameof(Index));
+
+            default:
+                return BadRequest();
         }
-
-        return RedirectToAction(nameof(Index));
     }
-
 }

@@ -9,7 +9,7 @@ public interface IProjectService
         Guid userId,
         CancellationToken cancellationToken);
 
-    Task<bool> CreateProjectAsync(
+    Task<ProjectResultStatus> CreateProjectAsync(
         Guid userId,
         CreateProjectRequest request,
         CancellationToken cancellationToken);
@@ -19,13 +19,13 @@ public interface IProjectService
         Guid projectId,
         CancellationToken cancellationToken);
 
-    Task<bool> UpdateProjectAsync(
+    Task<ProjectResultStatus> UpdateProjectAsync(
         Guid userId,
         Guid projectId,
         UpdateProjectRequest request,
         CancellationToken cancellationToken);
 
-    Task<bool> DeleteProjectAsync(
+    Task<ProjectResultStatus> DeleteProjectAsync(
         Guid userId,
         Guid projectId,
         CancellationToken cancellationToken);

@@ -1,3 +1,5 @@
+@model IReadOnlyList<CVMS.Web.Models.Project.ProjectListItemViewModel>
+
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>My Projects</h1>
 
@@ -27,17 +29,19 @@
                 -
                 @(project.EndDate?.ToString("MMM yyyy") ?? "Present")
             </td>
+
             <td class="text-end">
                 <a asp-action="Edit"
                    asp-route-id="@project.Id"
                    class="btn btn-sm btn-outline-primary">
                     Edit
                 </a>
-                
+
                 <form asp-action="Delete"
                       asp-route-id="@project.Id"
                       method="post"
                       class="d-inline">
+
                     <button type="submit"
                             class="btn btn-sm btn-outline-danger">
                         Delete
