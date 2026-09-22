@@ -1,11 +1,75 @@
+@using CVMS.Domain.Attributes
 @model CVMS.Web.Models.Profile.ProfileViewModel
 
-<div class="container">
-    <div class="mx-auto w-100" style="max-width: 580px">
-        <div>
-            f
+<h1>My Profile</h1>
+
+<form asp-action="Save" method="post"  style="max-width: 580px" class="mx-auto d-flex flex-column gap-3">
+    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="Version"/>
+
+    @foreach (var item in Model.Values)
+    {
+        var i = @Model.Values.IndexOf(item);
+        
+        <div class="mx-auto w-100 d-flex">
+            <label class="form-label w-25">@item.AttributeName</label>
+            @switch (item.AttributeType)
+            {
+                case "String":
+                    <input type="text"
+                           name="Values[@i].Value" 
+                           value="@item.Value" 
+                           class="w-100 form-control"/>
+                    break;
+                case "Numeric":
+                    <input type="number" 
+                           name="Values[@i].Value" 
+                           value="@item.Value" 
+                           class="w-100 form-control"/>
+                    break;
+                case "Date":
+                    <input type="text" 
+                           name="Values[@i].Value" 
+                           value="@item.Value" 
+                           class="w-100 form-control"/>
+                    break;
+                case "Image":
+                    <input type="text" 
+                           name="Values[@i].Value" 
+                           value="@item.Value" 
+                           class="w-100 form-control"/>
+                    break;
+
+                case "MarkdownText":
+                    <textarea asp-for="Values[i].Value"
+                              class="form-control"
+                              rows="5"></textarea>
+                    break;
+
+                case "Boolean":
+                    <select asp-for="Values[i].Value"
+                            class="form-select">
+                        <option value="">Select...</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                    break;
+                default:
+                    <input type="text"
+                           name="Values[@i].Value"
+                           value="@item.Value" />
+                    break;
+                    
+            }
+            <input type="hidden"
+                   name="Values[@i].AttributeId"
+                   value="@item.AttributeId" />
         </div>
+    }
+    
+    <div class=" d-flex justify-content-end w-100">
+        <button type="submit" class="btn btn-primary">
+            Save
+        </button>
     </div>
-
-
-</div>
+</form>

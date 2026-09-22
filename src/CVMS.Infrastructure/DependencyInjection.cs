@@ -1,6 +1,8 @@
 using CVMS.Application.Constants.Authorization;
+using CVMS.Application.Services;
 using CVMS.Infrastructure.Identity;
 using CVMS.Infrastructure.Persistence;
+using CVMS.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +28,8 @@ public static class DependencyInjection
             .AddIdentity<ApplicationUser, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+        
+        services.AddScoped<IProfileService, ProfileService>();
 
         services.AddAuthorization(options =>
         {

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CVMS.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+09206dba6f10790dc054e4e83647d99ef5b3f6b3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+627e68f43afca4f17a0e9a779d7e786339c67a4a")]
 [assembly: System.Reflection.AssemblyProductAttribute("CVMS.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CVMS.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

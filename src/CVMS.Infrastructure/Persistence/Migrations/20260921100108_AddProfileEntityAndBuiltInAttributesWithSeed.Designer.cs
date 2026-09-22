@@ -3,6 +3,7 @@ using System;
 using CVMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CVMS.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260921100108_AddProfileEntityAndBuiltInAttributesWithSeed")]
+    partial class AddProfileEntityAndBuiltInAttributesWithSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,9 +43,6 @@ namespace CVMS.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
 
                     b.Property<bool>("IsBuiltIn")
                         .HasColumnType("boolean");
@@ -80,7 +80,6 @@ namespace CVMS.Infrastructure.Persistence.Migrations
                             Category = "PersonalInformation",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Candidate First Name",
-                            DisplayOrder = 0,
                             IsBuiltIn = true,
                             Name = "First Name",
                             Type = "String",
@@ -93,7 +92,6 @@ namespace CVMS.Infrastructure.Persistence.Migrations
                             Category = "PersonalInformation",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Candidate Last Name",
-                            DisplayOrder = 0,
                             IsBuiltIn = true,
                             Name = "Last Name",
                             Type = "String",
@@ -106,7 +104,6 @@ namespace CVMS.Infrastructure.Persistence.Migrations
                             Category = "PersonalInformation",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Candidate Last Name",
-                            DisplayOrder = 0,
                             IsBuiltIn = true,
                             Name = "Location",
                             Type = "String",
@@ -119,7 +116,6 @@ namespace CVMS.Infrastructure.Persistence.Migrations
                             Category = "PersonalInformation",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Candidate Profile Photo",
-                            DisplayOrder = 0,
                             IsBuiltIn = true,
                             Name = "Photo",
                             Type = "Image",
@@ -397,7 +393,7 @@ namespace CVMS.Infrastructure.Persistence.Migrations
                     b.HasOne("CVMS.Domain.Entities.CvAttribute", "Attribute")
                         .WithMany("ProfileValues")
                         .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CVMS.Domain.Entities.Profile", "Profile")

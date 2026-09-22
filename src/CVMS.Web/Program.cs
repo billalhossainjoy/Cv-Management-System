@@ -1,6 +1,8 @@
+using CVMS.Application.Services;
 using CVMS.Infrastructure;
 using CVMS.Infrastructure.Identity;
 using CVMS.Infrastructure.Persistence;
+using CVMS.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +37,7 @@ if (!app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapStaticAssets();
 

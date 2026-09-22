@@ -16,6 +16,8 @@ public class CvAttribute: BaseEntity
     public uint Version { get; set; }
 
     public List<ProfileValue> ProfileValues { get; set; } = new();
+    
+    public int DisplayOrder { get; set; }
 
     public CvAttribute(){}
     

@@ -1,0 +1,43 @@
+@model string? 
+
+@if (Model is null)
+{
+    <div>
+        <p>
+            <a asp-action="Register" asp-controller="Account">
+                Register
+            </a>
+            /
+            <a asp-controller="Account" asp-action="Login">
+                Login
+            </a>
+        </p>
+    </div>
+}
+else
+{
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown">
+            @Model
+        </button>
+        <ul class="dropdown-menu w-100 mt-2">
+            <li>
+                <a class="dropdown-item"
+                   asp-controller="Profile" 
+                   asp-action="Index"
+                >Profile</a>
+            </li>
+            <li>
+                <form asp-controller="Account"
+                      asp-action="Logout"
+                      method="post">
+                    <button type="submit" class="dropdown-item">
+                        Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+}

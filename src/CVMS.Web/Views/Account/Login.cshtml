@@ -7,7 +7,7 @@
 <div class="">
     <div class="mx-auto w-100 d-flex align-items-center flex-column " style="max-width: 580px">
         <h1 class="">Login</h1>
-        <p class="">welcome to JobQL</p>
+        <p class="">Welcome to JobQL</p>
         <form asp-action="Login" method="post" class="w-100">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -26,10 +26,10 @@
                 <input asp-for="RememberMe" />
                 <label asp-for="RememberMe"></label>
             </div>
-
+            
             <button type="submit" class="btn btn-primary d-block w-100 mt-3">Login</button>
             <p class="text-center">I have not any account, <a asp-action="Register" class="text-primary text-decoration-underline">Register now</a>.</p>
-
+            
         </form>
     </div>
 </div>

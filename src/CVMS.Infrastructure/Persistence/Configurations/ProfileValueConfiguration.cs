@@ -13,7 +13,15 @@ public class ProfileValueConfiguration: IEntityTypeConfiguration<ProfileValue>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Value).HasMaxLength(500);
         builder.Property(x => x.Version).IsRowVersion();
+        
+        builder.HasOne(x => x.Profile)
+            .WithMany(x => x.Values)
+            .HasForeignKey(x => x.ProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(x => x.Attribute).WithMany(x => x.ProfileValues);
+        builder.HasOne(x => x.Attribute)
+            .WithMany(x => x.ProfileValues)
+            .HasForeignKey(x => x.AttributeId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

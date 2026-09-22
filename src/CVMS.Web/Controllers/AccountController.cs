@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using CVMS.Application.Constants.Authorization;
 using CVMS.Domain.Attributes;
 using CVMS.Domain.Entities;
@@ -6,7 +7,7 @@ using CVMS.Infrastructure.Persistence;
 using CVMS.Web.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.EntityFrameworkCore;
 using AppUserManager = Microsoft.AspNetCore.Identity.UserManager<CVMS.Infrastructure.Identity.ApplicationUser>;
 using AppSignInManager = Microsoft.AspNetCore.Identity.SignInManager<CVMS.Infrastructure.Identity.ApplicationUser>;
 
@@ -142,7 +143,11 @@ public sealed class AccountController : Controller
         }
 
         var result =
-            await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: true);
+            await _signInManager.PasswordSignInAsync(
+                user, 
+                model.Password, 
+                model.RememberMe, 
+                lockoutOnFailure: true);
         
         if (!result.Succeeded)
         {
