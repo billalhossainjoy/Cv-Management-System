@@ -16,6 +16,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Profile>  Profiles => Set<Profile>();
     public DbSet<ProfileValue> ProfileValues => Set<ProfileValue>();
     public DbSet<Project> Projects => Set<Project>();
+    public DbSet<Position> Positions => Set<Position>();
     public DbSet<PositionAttribute> PositionAttributes => Set<PositionAttribute>();
     
     protected override void OnModelCreating(ModelBuilder builder)

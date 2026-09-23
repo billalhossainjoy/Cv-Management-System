@@ -33,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<IProfileService, ProfileService>();
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IAttributeService, AttributeService>();
+        services.AddScoped<IPositionService, PositionService>();
 
         services.AddAuthorization(options =>
         {
