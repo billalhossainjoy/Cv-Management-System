@@ -140,4 +140,214 @@ public class PositionsController: Controller
             })
             .ToList();
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> Edit(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var position = await _positionService.GetByIdAsync(
+            id,
+            cancellationToken);
+
+        if (position is null)
+        {
+            return NotFound();
+        }
+
+        var attributes = await _attributeService.GetAllAsync(
+            cancellationToken);
+
+        var selectedAttributes = position.Attributes
+            .ToDictionary(
+                x => x.AttributeId,
+                x => x);
+
+        var model = new EditPositionViewModel
+        {
+            Id = position.Id,
+            Title = position.Title,
+            ShortDescription = position.ShortDescription,
+            MaximumProjects = position.MaximumProjects,
+
+            Attributes = attributes
+                .Select(a =>
+                {
+                    var selected =
+                        selectedAttributes.TryGetValue(
+                            a.Id,
+                            out var positionAttribute);
+
+                    return new PositionAttributeSelectionViewModel
+                    {
+                        AttributeId = a.Id,
+                        Name = a.Name,
+                        Category = a.Category,
+
+                        Selected = selected,
+
+                        IsRequired =
+                            selected &&
+                            positionAttribute!.IsRequired
+                    };
+                })
+                .ToList()
+        };
+
+        return View(model);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(
+        EditPositionViewModel model,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            await ReloadEditAttributesAsync(
+                model,
+                cancellationToken);
+
+            return View(model);
+        }
+
+        var selectedAttributes = model.Attributes
+            .Where(x => x.Selected)
+            .Select((x, index) =>
+                new PositionAttributeRequest(
+                    x.AttributeId,
+                    x.IsRequired,
+                    (index + 1) * 10))
+            .ToList();
+
+        var request = new UpdatePositionRequest(
+            model.Title,
+            model.ShortDescription,
+            model.MaximumProjects,
+            selectedAttributes);
+
+        var result = await _positionService.UpdateAsync(
+            model.Id,
+            request,
+            cancellationToken);
+
+        switch (result)
+        {
+            case PositionResultStatus.Success:
+                TempData["Success"] =
+                    "Position updated successfully.";
+
+                return RedirectToAction(nameof(Index));
+
+            case PositionResultStatus.NotFound:
+                return NotFound();
+
+            case PositionResultStatus.InvalidMaximumProjects:
+                ModelState.AddModelError(
+                    nameof(model.MaximumProjects),
+                    "Maximum projects must be zero or greater.");
+                break;
+
+            case PositionResultStatus.InvalidAttribute:
+            case PositionResultStatus.DuplicateAttribute:
+                ModelState.AddModelError(
+                    string.Empty,
+                    "One or more selected attributes are invalid.");
+                break;
+        }
+
+        await ReloadEditAttributesAsync(
+            model,
+            cancellationToken);
+
+        return View(model);
+    }
+    
+    private async Task ReloadEditAttributesAsync(
+        EditPositionViewModel model,
+        CancellationToken cancellationToken)
+    {
+        var attributes = await _attributeService.GetAllAsync(
+            cancellationToken);
+
+        var submitted = model.Attributes
+            .ToDictionary(
+                x => x.AttributeId,
+                x => new
+                {
+                    x.Selected,
+                    x.IsRequired
+                });
+
+        model.Attributes = attributes
+            .Select(a =>
+            {
+                submitted.TryGetValue(
+                    a.Id,
+                    out var existing);
+
+                return new PositionAttributeSelectionViewModel
+                {
+                    AttributeId = a.Id,
+                    Name = a.Name,
+                    Category = a.Category,
+
+                    Selected =
+                        existing?.Selected ?? false,
+
+                    IsRequired =
+                        existing?.IsRequired ?? false
+                };
+            })
+            .ToList();
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await _positionService.DeleteAsync(
+            id,
+            cancellationToken);
+
+        switch (result)
+        {
+            case PositionResultStatus.Success:
+                TempData["Success"] = "Position deleted.";
+                return RedirectToAction(nameof(Index));
+
+            case PositionResultStatus.NotFound:
+                return NotFound();
+
+            default:
+                return BadRequest();
+        }
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Duplicate(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await _positionService.DuplicateAsync(
+            id,
+            cancellationToken);
+
+        switch (result)
+        {
+            case PositionResultStatus.Success:
+                TempData["Success"] = "Position duplicated.";
+                return RedirectToAction(nameof(Index));
+
+            case PositionResultStatus.NotFound:
+                return NotFound();
+
+            default:
+                return BadRequest();
+        }
+    }
 }

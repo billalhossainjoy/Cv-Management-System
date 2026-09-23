@@ -1,0 +1,97 @@
+@model CVMS.Web.Models.Position.EditPositionViewModel
+
+<h1>Edit Position</h1>
+
+<form asp-action="Edit"
+      method="post"
+      class="d-flex flex-column gap-3">
+
+    <input type="hidden" asp-for="Id" />
+
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger"></div>
+
+    <div style="max-width: 700px">
+        <label asp-for="Title"
+               class="form-label"></label>
+
+        <input asp-for="Title"
+               class="form-control" />
+    </div>
+
+    <div style="max-width: 700px">
+        <label asp-for="ShortDescription"
+               class="form-label"></label>
+
+        <textarea asp-for="ShortDescription"
+                  rows="4"
+                  class="form-control"></textarea>
+    </div>
+
+    <div style="max-width: 300px">
+        <label asp-for="MaximumProjects"
+               class="form-label">
+            Maximum Projects
+        </label>
+
+        <input asp-for="MaximumProjects"
+               type="number"
+               min="0"
+               class="form-control" />
+    </div>
+
+    <h2 class="h5">
+        Position Attributes
+    </h2>
+
+    <table class="table align-middle">
+        <thead>
+        <tr>
+            <th>Include</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Required</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @for (var i = 0; i < Model.Attributes.Count; i++)
+        {
+            <tr>
+                <td>
+                    <input type="hidden"
+                           asp-for="Attributes[i].AttributeId" />
+
+                    <input asp-for="Attributes[i].Selected"
+                           class="form-check-input" />
+                </td>
+
+                <td>
+                    @Model.Attributes[i].Name
+                </td>
+
+                <td>
+                    @Model.Attributes[i].Category
+                </td>
+
+                <td>
+                    <input asp-for="Attributes[i].IsRequired"
+                           class="form-check-input" />
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div class="d-flex gap-2">
+        <button type="submit"
+                class="btn btn-primary">
+            Save
+        </button>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+    </div>
+</form>
