@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CVMS.Web.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Candidate,Administrator")]
 public class ProjectsController : Controller
 {
     private readonly IProjectService _projectService;

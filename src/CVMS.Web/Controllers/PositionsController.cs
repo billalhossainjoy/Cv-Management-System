@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CVMS.Web.Controllers;
 
-// [Authorize(Policy = Policies.RecruiterAccess)]
+[Authorize(Policy = Policies.RecruiterAccess)]
 public class PositionsController: Controller
 {
     private readonly IPositionService _positionService;
@@ -22,6 +22,7 @@ public class PositionsController: Controller
     }
     
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Index(
         CancellationToken cancellationToken)
     {

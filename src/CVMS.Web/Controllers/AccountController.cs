@@ -94,6 +94,18 @@ public sealed class AccountController : Controller
                     Profile = profile,
                     AttributeId = BuiltInAttributes.LastName,
                     Value = model.LastName
+                },
+                new()
+                {
+                    Profile = profile,
+                    AttributeId = BuiltInAttributes.Location,
+                    Value = ""
+                },
+                new()
+                {
+                    Profile = profile,
+                    AttributeId = BuiltInAttributes.Photo,
+                    Value = ""
                 }
             };
             _context.ProfileValues.AddRange(profileValues);
