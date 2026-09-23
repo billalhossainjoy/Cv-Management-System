@@ -49,8 +49,9 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    await IdentitySeeder.SeedRolesAsync(roleManager);
+    await IdentitySeeder.SeedRolesAsync(roleManager, userManager);
 }
 
 app.Run();

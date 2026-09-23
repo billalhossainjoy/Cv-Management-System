@@ -30,7 +30,7 @@
                                 </a>
                             </li>
 
-                            @if (User.Identity?.IsAuthenticated == true)
+                            @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Candidate"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link"
@@ -60,8 +60,6 @@
                                     </a>
                                 </li>
                             }
-                            
-                            
 
                             @if (User.IsInRole("Recruiter") ||
                                  User.IsInRole("Administrator"))

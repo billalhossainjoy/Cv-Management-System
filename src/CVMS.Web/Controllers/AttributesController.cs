@@ -1,4 +1,5 @@
 using CVMS.Application.Attribute;
+using CVMS.Application.Constants.Authorization;
 using CVMS.Application.Services.Interfaces;
 using CVMS.Web.Models.Attribute;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CVMS.Web.Controllers;
 
-[Authorize(Policy = "RecruiterAccess")]
+[Authorize(Policy = Policies.RecruiterAccess)]
 public class AttributesController : Controller
 {
     private readonly IAttributeService _attributeService;

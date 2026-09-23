@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CVMS.Web.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Candidate,Administrator")]
 public class ProfileController : Controller
 {    private readonly IProfileService _profileService;
 
