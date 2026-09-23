@@ -55,6 +55,7 @@ public class ProjectService : IProjectService
             EndDate = request.EndDate,
             Description = request.Description.Trim()
         };
+        
 
         _context.Projects.Add(project);
 

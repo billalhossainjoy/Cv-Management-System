@@ -5,7 +5,8 @@ public enum ProjectResultStatus
     Success,
     NotFound,
     InvalidDateRange,
-    Failure
+    Failure,
+    InvalidTechnologyTag
 }
 
 public sealed record CreateProjectRequest(

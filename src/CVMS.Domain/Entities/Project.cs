@@ -15,4 +15,7 @@ public class Project: BaseEntity
     public DateOnly? EndDate { get; set; }
 
     public string Description { get; set; } = string.Empty;
+    
+    public ICollection<TechnologyTag> TechnologyTags { get; set; }
+        = new List<TechnologyTag>();
 }

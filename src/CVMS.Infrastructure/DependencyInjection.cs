@@ -34,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IAttributeService, AttributeService>();
         services.AddScoped<IPositionService, PositionService>();
+        services.AddScoped<ITechnologyTagService, TechnologyTagService>();
 
         services.AddAuthorization(options =>
         {

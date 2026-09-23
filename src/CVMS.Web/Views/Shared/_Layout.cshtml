@@ -20,6 +20,57 @@
                                 aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
+                        
+                        <ul class="navbar-nav me-auto">
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Home"
+                                   asp-action="Index">
+                                    Home
+                                </a>
+                            </li>
+
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       asp-controller="Profile"
+                                       asp-action="Index">
+                                        My Profile
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       asp-controller="Projects"
+                                       asp-action="Index">
+                                        Projects
+                                    </a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Recruiter") ||
+                                 User.IsInRole("Administrator"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       asp-controller="Attributes"
+                                       asp-action="Index">
+                                        Attribute Library
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       asp-controller="Positions"
+                                       asp-action="Index">
+                                        Positions
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
                     </div>
 
                     

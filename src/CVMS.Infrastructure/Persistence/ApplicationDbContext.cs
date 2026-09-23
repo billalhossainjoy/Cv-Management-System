@@ -18,6 +18,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<Position> Positions => Set<Position>();
     public DbSet<PositionAttribute> PositionAttributes => Set<PositionAttribute>();
+    public DbSet<TechnologyTag> TechnologyTags => Set<TechnologyTag>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

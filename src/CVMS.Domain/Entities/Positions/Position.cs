@@ -10,4 +10,7 @@ public class Position: BaseEntity
 
     public ICollection<PositionAttribute> Attributes { get; set; }
         = new List<PositionAttribute>();
+    
+    public ICollection<TechnologyTag> TechnologyTags { get; set; }
+        = new List<TechnologyTag>();
 }
