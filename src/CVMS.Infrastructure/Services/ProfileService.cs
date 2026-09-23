@@ -21,7 +21,7 @@ public class ProfileService : IProfileService
     public async Task<Profile?> GetProfileAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await _context.Profiles
-            .Include(p => p.Values)
+            .Include(p => p.Values.OrderBy(v => v.AttributeId))
             .ThenInclude(v => v.Attribute)
             .FirstOrDefaultAsync(p => p.UserId == userId,cancellationToken);
     }
