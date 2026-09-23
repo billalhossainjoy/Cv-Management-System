@@ -1,6 +1,8 @@
 using CVMS.Application.Profiles;
 using CVMS.Application.Services;
+using CVMS.Application.Services.Interfaces;
 using CVMS.Domain.Entities;
+using CVMS.Domain.Entities.Profiles;
 using CVMS.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

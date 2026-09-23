@@ -2,6 +2,7 @@ using System.Security.Claims;
 using CVMS.Application.Constants.Authorization;
 using CVMS.Domain.Attributes;
 using CVMS.Domain.Entities;
+using CVMS.Domain.Entities.Profiles;
 using CVMS.Infrastructure.Identity;
 using CVMS.Infrastructure.Persistence;
 using CVMS.Web.Models.Auth;
@@ -72,7 +73,7 @@ public sealed class AccountController : Controller
             await _userManager.AddToRoleAsync(
                 user, Roles.Candidate);
 
-            var profile = new Profile()
+            var profile = new Profile
             {
                 UserId = user.Id
             };

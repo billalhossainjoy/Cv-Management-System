@@ -1,7 +1,8 @@
 using CVMS.Application.Profiles;
 using CVMS.Domain.Entities;
+using CVMS.Domain.Entities.Profiles;
 
-namespace CVMS.Application.Services;
+namespace CVMS.Application.Services.Interfaces;
 
 public interface IProfileService
 {

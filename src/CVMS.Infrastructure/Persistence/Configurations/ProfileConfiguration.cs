@@ -1,4 +1,5 @@
 using CVMS.Domain.Entities;
+using CVMS.Domain.Entities.Profiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

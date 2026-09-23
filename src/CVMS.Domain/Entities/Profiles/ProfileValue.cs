@@ -1,4 +1,4 @@
-namespace CVMS.Domain.Entities;
+namespace CVMS.Domain.Entities.Profiles;
 
 public class ProfileValue: BaseEntity
 {

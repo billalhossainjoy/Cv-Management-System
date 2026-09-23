@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CVMS.Application.Projects;
 using CVMS.Application.Services;
+using CVMS.Application.Services.Interfaces;
 using CVMS.Web.Models.Project;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

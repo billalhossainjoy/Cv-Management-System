@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using CVMS.Application.Services;
+using CVMS.Application.Services.Interfaces;
 using CVMS.Domain.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;

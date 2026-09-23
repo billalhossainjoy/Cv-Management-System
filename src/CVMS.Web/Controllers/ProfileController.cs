@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CVMS.Application.Profiles;
 using CVMS.Application.Services;
+using CVMS.Application.Services.Interfaces;
 using CVMS.Domain.Attributes;
 using CVMS.Domain.Entities;
 using CVMS.Web.Models.Profile;

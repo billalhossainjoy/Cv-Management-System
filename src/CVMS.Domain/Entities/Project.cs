@@ -1,4 +1,6 @@
+using CVMS.Domain.Entities.Profiles;
 namespace CVMS.Domain.Entities;
+
 
 public class Project: BaseEntity
 {

@@ -1,4 +1,6 @@
 using CVMS.Domain.Entities;
+using CVMS.Domain.Entities.Positions;
+using CVMS.Domain.Entities.Profiles;
 using CVMS.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -14,6 +16,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Profile>  Profiles => Set<Profile>();
     public DbSet<ProfileValue> ProfileValues => Set<ProfileValue>();
     public DbSet<Project> Projects => Set<Project>();
+    public DbSet<PositionAttribute> PositionAttributes => Set<PositionAttribute>();
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

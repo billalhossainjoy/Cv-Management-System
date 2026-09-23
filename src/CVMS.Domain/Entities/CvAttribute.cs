@@ -1,4 +1,5 @@
 using CVMS.Domain.Attributes;
+using CVMS.Domain.Entities.Profiles;
 
 namespace CVMS.Domain.Entities;
 

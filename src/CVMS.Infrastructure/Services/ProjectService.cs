@@ -1,5 +1,6 @@
 using CVMS.Application.Projects;
 using CVMS.Application.Services;
+using CVMS.Application.Services.Interfaces;
 using CVMS.Domain.Entities;
 using CVMS.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

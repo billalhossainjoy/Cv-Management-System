@@ -1,7 +1,7 @@
 using CVMS.Application.Projects;
 using CVMS.Domain.Entities;
 
-namespace CVMS.Application.Services;
+namespace CVMS.Application.Services.Interfaces;
 
 public interface IProjectService
 {
