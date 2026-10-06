@@ -1,0 +1,47 @@
+using CVMS.Application.Constants.Authorization;
+using CVMS.Application.Services;
+using CVMS.Application.Services.Interfaces;
+using CVMS.Infrastructure.Identity;
+using CVMS.Infrastructure.Persistence;
+using CVMS.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CVMS.Infrastructure.DependencyInjection;
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var connectionString =
+            configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException(
+                "Connection string 'DefaultConnection' was not found.");
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(connectionString));
+
+        services
+            .AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+        
+        services.AddScoped<IProfileService, ProfileService>();
+        services.AddScoped<IProjectService, ProjectService>();
+        services.AddScoped<IAttributeService, AttributeService>();
+        services.AddScoped<IPositionService, PositionService>();
+        services.AddScoped<ITechnologyTagService, TechnologyTagService>();
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(Policies.RecruiterAccess, policy => policy.RequireRole(Roles.Recruiter, Roles.Administrator));
+            options.AddPolicy(Policies.AdministratorOnly, policy => policy.RequireRole(Roles.Administrator));
+        });
+
+        return services;
+    }
+}

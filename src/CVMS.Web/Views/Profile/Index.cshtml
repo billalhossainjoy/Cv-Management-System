@@ -1,7 +1,14 @@
 @using CVMS.Domain.Attributes
 @model CVMS.Web.Models.Profile.ProfileViewModel
 
-<h1>My Profile</h1>
+<div class="d-flex justify-content-between">
+    <h1>My Profile</h1>
+    <div>
+        <a asp-controller="Profile" asp-action="SalesforceIntegration" class="btn btn-primary">
+            Send to Salesforce CRM
+        </a>
+    </div>
+</div>
 
 <form
     asp-action="AddAttribute"
