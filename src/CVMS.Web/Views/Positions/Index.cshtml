@@ -26,6 +26,15 @@
     }
 </div>
 
+@if (TempData["ApiTokenSuccess"] != null)
+{
+    <div class="alert alert-success mt-2 mb-3">
+        @TempData["ApiTokenSuccess"]
+        <br />
+        <small class="text-muted">You can use this token in Odoo to import data for this position.</small>
+    </div>
+}
+
 @if (canManage)
 {
     <div class="d-flex gap-2 mb-3">
@@ -48,6 +57,13 @@
                 class="btn btn-outline-danger"
                 disabled>
             Delete
+        </button>
+        
+        <button id="generateTokenButton"
+                type="button"
+                class="btn btn-outline-info"
+                disabled>
+            Generate API Token
         </button>
     </div>
 }
@@ -131,6 +147,15 @@ else
                type="hidden"
                name="id" />
     </form>
+    
+    <form id="generateTokenForm"
+          asp-action="GenerateApiToken"
+          method="post">
+
+        <input id="generateTokenId"
+               type="hidden"
+               name="id" />
+    </form>
 
     <script>
         const selectors =
@@ -144,18 +169,27 @@ else
 
         const deleteButton =
             document.getElementById("deleteButton");
+            
+        const generateTokenButton =
+            document.getElementById("generateTokenButton");
 
         const duplicateForm =
             document.getElementById("duplicateForm");
 
         const deleteForm =
             document.getElementById("deleteForm");
+            
+        const generateTokenForm =
+            document.getElementById("generateTokenForm");
 
         const duplicateId =
             document.getElementById("duplicateId");
 
         const deleteId =
             document.getElementById("deleteId");
+            
+        const generateTokenId =
+            document.getElementById("generateTokenId");
 
         let selectedId = null;
 
@@ -166,6 +200,7 @@ else
                 editButton.disabled = false;
                 duplicateButton.disabled = false;
                 deleteButton.disabled = false;
+                generateTokenButton.disabled = false;
             });
         });
 
@@ -199,6 +234,15 @@ else
 
             deleteId.value = selectedId;
             deleteForm.submit();
+        });
+        
+        generateTokenButton.addEventListener("click", () => {
+            if (!selectedId) {
+                return;
+            }
+
+            generateTokenId.value = selectedId;
+            generateTokenForm.submit();
         });
     </script>
 }

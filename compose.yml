@@ -21,5 +21,24 @@ services:
       timeout: 5s
       retries: 5
 
+  odoo:
+    image: odoo:17.0
+    container_name: cvms-odoo
+    depends_on:
+      - postgres
+    ports:
+      - "8069:8069"
+    command: --db-filter=^odoo_db$
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./odoo-custom-addons:/mnt/extra-addons
+      - odoo_data:/var/lib/odoo
+    environment:
+      - HOST=postgres
+      - USER=cvms_user
+      - PASSWORD=cvms_password
+
 volumes:
   cvms_postgres_data:
+  odoo_data:

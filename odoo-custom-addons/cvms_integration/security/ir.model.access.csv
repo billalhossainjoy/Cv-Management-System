@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cvms_position,cvms.position,model_cvms_position,base.group_user,1,1,1,1
+access_cvms_position_attribute,cvms.position_attribute,model_cvms_position_attribute,base.group_user,1,1,1,1
+access_cvms_import_wizard,cvms.import_wizard,model_cvms_import_wizard,base.group_user,1,1,1,1
+

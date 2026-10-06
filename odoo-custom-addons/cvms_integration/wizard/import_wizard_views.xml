@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cvms_import_wizard_form" model="ir.ui.view">
+        <field name="name">cvms.import.wizard.form</field>
+        <field name="model">cvms.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import CVMS Data">
+                <group>
+                    <field name="api_token"/>
+                </group>
+                <footer>
+                    <button name="action_import_data" string="Import" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cvms_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import CVMS Data</field>
+        <field name="res_model">cvms.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+

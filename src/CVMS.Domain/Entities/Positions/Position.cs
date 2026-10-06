@@ -13,4 +13,11 @@ public class Position: BaseEntity
     
     public ICollection<TechnologyTag> TechnologyTags { get; set; }
         = new List<TechnologyTag>();
+
+    public string? ApiToken { get; private set; }
+
+    public void GenerateApiToken()
+    {
+        ApiToken = Guid.NewGuid().ToString("N");
+    } 
 }

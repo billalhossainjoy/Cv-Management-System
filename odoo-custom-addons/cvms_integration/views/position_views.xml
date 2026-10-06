@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cvms_position_tree" model="ir.ui.view">
+        <field name="name">cvms.position.tree</field>
+        <field name="model">cvms.position</field>
+        <field name="arch" type="xml">
+            <tree string="Positions" create="false" edit="false">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_cvms_position_form" model="ir.ui.view">
+        <field name="name">cvms.position.form</field>
+        <field name="model">cvms.position</field>
+        <field name="arch" type="xml">
+            <form string="Position" create="false" edit="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <notebook>
+                        <page string="Attributes">
+                            <field name="attribute_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="attr_type"/>
+                                    <field name="aggregated_value"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cvms_position" model="ir.actions.act_window">
+        <field name="name">Imported Positions</field>
+        <field name="res_model">cvms.position</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_cvms_root" name="CVMS Data" sequence="10"/>
+    <menuitem id="menu_cvms_positions" name="Positions" parent="menu_cvms_root" action="action_cvms_position" sequence="10"/>
+    <menuitem id="menu_cvms_import" name="Import Data" parent="menu_cvms_root" action="action_cvms_import_wizard" sequence="20"/>
+</odoo>
+

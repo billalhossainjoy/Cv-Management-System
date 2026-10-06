@@ -351,4 +351,20 @@ public class PositionsController: Controller
                 return BadRequest();
         }
     }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> GenerateApiToken(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var token = await _positionService.GenerateApiTokenAsync(id, cancellationToken);
+        if (token == null)
+        {
+            return NotFound();
+        }
+        
+        TempData["ApiTokenSuccess"] = $"New API Token generated: {token}";
+        return RedirectToAction(nameof(Index));
+    }
 }

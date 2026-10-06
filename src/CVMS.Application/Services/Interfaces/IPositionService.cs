@@ -14,6 +14,10 @@ public interface IPositionService
     Task<PositionDetails?> GetByIdAsync(
         Guid id,
         CancellationToken cancellationToken);
+        
+    Task<PositionDetails?> GetByTokenAsync(
+        string token,
+        CancellationToken cancellationToken);
 
     Task<PositionResultStatus> UpdateAsync(
         Guid id,
@@ -25,6 +29,10 @@ public interface IPositionService
         CancellationToken cancellationToken);
 
     Task<PositionResultStatus> DuplicateAsync(
+        Guid id,
+        CancellationToken cancellationToken);
+        
+    Task<string?> GenerateApiTokenAsync(
         Guid id,
         CancellationToken cancellationToken);
 }
