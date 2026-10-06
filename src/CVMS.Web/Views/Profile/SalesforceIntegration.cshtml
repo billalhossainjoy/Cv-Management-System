@@ -1,0 +1,29 @@
+@model CVMS.Web.Models.Profile.SalesforceIntegrationViewModel
+
+@{
+    ViewData["Title"] = "Salesforce CRM Integration";
+}
+
+<div class="container mt-4">
+    <h2>Add to Salesforce CRM</h2>
+    <p>Please provide any additional information to store in the CRM (e.g., newsletter preferences, availability).</p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="SalesforceIntegration" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="mb-3">
+                    <label asp-for="ExtraInfo" class="form-label">Additional Information / Notes</label>
+                    <textarea asp-for="ExtraInfo" class="form-control" rows="4" placeholder="E.g., Wants to receive the weekly newsletter..."></textarea>
+                    <span asp-validation-for="ExtraInfo" class="text-danger"></span>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-success">Sync to Salesforce</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

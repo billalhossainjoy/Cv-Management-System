@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CVMS.Application.Integrations;
 using CVMS.Application.Profiles;
 using CVMS.Application.Services;
 using CVMS.Application.Services.Interfaces;
@@ -13,10 +14,12 @@ namespace CVMS.Web.Controllers;
 [Authorize(Roles = "Candidate,Administrator")]
 public class ProfileController : Controller
 {    private readonly IProfileService _profileService;
+    private readonly ISalesforceService _salesforceService;
 
-    public ProfileController(IProfileService profileService)
+    public ProfileController(IProfileService profileService,  ISalesforceService salesforceService)
     {
         _profileService = profileService;
+        _salesforceService =   salesforceService;
     }
 
     private Guid? GetUserId()
@@ -166,5 +169,30 @@ public class ProfileController : Controller
 
         var attributes = await _profileService.GetRecentlyUsedAttributesAsync(userId.Value, cancellationToken);
         return Json(attributes);
+    }
+    
+    [HttpGet]
+    public IActionResult SalesforceIntegration()
+    {
+        return View(new SalesforceIntegrationViewModel());
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SalesforceIntegration(SalesforceIntegrationViewModel model, CancellationToken ct)
+    {
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+        
+        
+        var success = await _salesforceService.PushUserToSalesforceAsync(userId.Value, model.ExtraInfo, ct);
+        if (success)
+        {
+            TempData["Success"] = "Successfully synced to Salesforce CRM!";
+            return RedirectToAction(nameof(Index));
+        }
+    
+        ModelState.AddModelError("", "Failed to sync to Salesforce. Check API credentials.");
+        return View(model);
     }
 }

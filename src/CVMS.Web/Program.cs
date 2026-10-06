@@ -1,5 +1,4 @@
-using CVMS.Application.Services;
-using CVMS.Infrastructure;
+using CVMS.Infrastructure.DependencyInjection;
 using CVMS.Infrastructure.Identity;
 using CVMS.Infrastructure.Persistence;
 using CVMS.Infrastructure.Services;
@@ -12,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddSalesforceExtension(builder.Configuration);
 
 var app = builder.Build();
 
