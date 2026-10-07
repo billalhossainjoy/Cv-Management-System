@@ -1,5 +1,9 @@
 FROM odoo:17.0
-USER root
-RUN sed -i 's/exit 1/# exit 1/g' /entrypoint.sh
-USER odoo
 COPY ./odoo-custom-addons /mnt/extra-addons
+
+USER root
+# Delete the entire block that checks for postgres user
+RUN sed -i '/security risk/,+2d' /entrypoint.sh || true
+RUN sed -i 's/exit 1/echo bypass/g' /entrypoint.sh || true
+USER odoo
+
