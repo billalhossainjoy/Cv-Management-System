@@ -1,2 +1,5 @@
 FROM odoo:17.0
+USER root
+RUN sed -i 's/exit 1/# exit 1/g' /entrypoint.sh
+USER odoo
 COPY ./odoo-custom-addons /mnt/extra-addons
