@@ -105,6 +105,27 @@ public class PositionService: IPositionService
             .FirstOrDefaultAsync(cancellationToken);
     }
     
+    public async Task<PositionDetails?> GetByTokenAsync(
+        string token,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Positions
+            .Where(p => p.ApiToken == token)
+            .Select(p => new PositionDetails(
+                p.Id,
+                p.Title,
+                p.ShortDescription,
+                p.MaximumProjects,
+                p.Attributes
+                    .OrderBy(a => a.DisplayOrder)
+                    .Select(a => new PositionAttributeDetails(
+                        a.AttributeId,
+                        a.IsRequired,
+                        a.DisplayOrder))
+                    .ToList()))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+    
     public async Task<PositionResultStatus> UpdateAsync(
         Guid id,
         UpdatePositionRequest request,
@@ -229,5 +250,20 @@ public class PositionService: IPositionService
         await _context.SaveChangesAsync(cancellationToken);
 
         return PositionResultStatus.Success;
+    }
+    
+    public async Task<string?> GenerateApiTokenAsync(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var position = await _context.Positions
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+        if (position == null) return null;
+
+        position.GenerateApiToken();
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return position.ApiToken;
     }
 }
