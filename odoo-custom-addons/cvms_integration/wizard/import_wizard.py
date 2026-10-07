@@ -9,7 +9,8 @@ class CvmsImportWizard(models.TransientModel):
     api_token = fields.Char(string="API Token", required=True)
 
     def action_import_data(self):
-        api_url = f"http://host.docker.internal:5000/api/odoo-integration/position-stats?token={self.api_token}"
+        base_url = self.env['ir.config_parameter'].sudo().get_param('cvms.api_url', 'http://localhost:5000')
+        api_url = f"{base_url}/api/odoo-integration/position-stats?token={self.api_token}"
         
         try:
             response = requests.get(api_url)
